@@ -24,6 +24,9 @@ spec:
       app: elasticsearch
   serviceName: elasticsearch
   replicas: 3
+  esConfig:
+  elasticsearch.yml: |
+    xpack.security.enabled: false
   template:
     metadata:
       labels:
