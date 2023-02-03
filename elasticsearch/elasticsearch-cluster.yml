@@ -24,13 +24,14 @@ spec:
       app: elasticsearch
   serviceName: elasticsearch
   replicas: 3
-  esConfig:
-  elasticsearch.yml: |
-    xpack.security.enabled: false
   template:
     metadata:
       labels:
         app: elasticsearch
+  esConfig:
+  elasticsearch.yml: |
+    xpack.security.enabled: false
+    
     spec:
       containers:
         - name: elasticsearch
@@ -44,6 +45,7 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+             
           ports:
             - containerPort: 9200
               name: http
