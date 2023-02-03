@@ -10,6 +10,7 @@ data:
     network.host: 0.0.0.0
     discovery.seed_hosts: ["elasticsearch-0", "elasticsearch-1", "elasticsearch-2"]
     cluster.initial_master_nodes: ["elasticsearch-0", "elasticsearch-1", "elasticsearch-2"]
+    xpack.security.enabled: false
 
 ---
 
@@ -28,9 +29,7 @@ spec:
     metadata:
       labels:
         app: elasticsearch
-  esConfig:
-  elasticsearch.yml: |
-    xpack.security.enabled: false
+
     
     spec:
       containers:
