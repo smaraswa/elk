@@ -49,11 +49,7 @@ spec:
               name: http
             - containerPort: 9300
               name: transport
-            
-      hostNetwork: true
-      dnsPolicy: ClusterFirstWithHostNet
-
-
+         
           volumeMounts:
             - name: config
               mountPath: /usr/share/elasticsearch/config/elasticsearch.yml
