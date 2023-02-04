@@ -40,7 +40,7 @@ spec:
       volumes:
         - name: varlog
           hostPath:
-            path: /var/log
+            path: /var/log/*.log
         - name: config
           configMap:
             name: filebeat-config
