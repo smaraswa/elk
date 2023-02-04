@@ -34,6 +34,16 @@ spec:
       containers:
         - name: elasticsearch
           image: docker.elastic.co/elasticsearch/elasticsearch:7.9.0
+          command:
+          - sh
+          - -c
+          - |
+          #!/bin/sh
+          set -e
+          # Add the host entries for all ELK pods
+          echo "$(getent hosts elasticsearch-0.elasticsearch | awk '{print $1}') elasticsearch-0.elasticsearch" >> /etc/hosts
+          echo "$(getent hosts elasticsearch-1.elasticsearch | awk '{print $1}') elasticsearch-1.elasticsearch" >> /etc/hosts
+          echo "$(getent hosts elasticsearch-2.elasticsearch | awk '{print $1}') elasticsearch-2.elasticsearch" >> /etc/hosts
           env:
             - name: NAMESPACE
               valueFrom:
@@ -64,31 +74,6 @@ spec:
         - name: config
           configMap:
             name: elasticsearch-config
----
-apiVersion: v1
-kind: Pod
-metadata:
-  name: my-pod
-spec:
-  initContainers:
-  - name: init-hosts
-    image: busybox
-    command:
-    - sh
-    - -c
-    - |
-      #!/bin/sh
-      set -e
-
-      # Add the host entries for all ELK pods
-      echo "$(getent hosts elasticsearch-0.elasticsearch | awk '{print $1}') elasticsearch-0.elasticsearch" >> /etc/hosts
-      echo "$(getent hosts elasticsearch-1.elasticsearch | awk '{print $1}') elasticsearch-1.elasticsearch" >> /etc/hosts
-      echo "$(getent hosts elasticsearch-2.elasticsearch | awk '{print $1}') elasticsearch-2.elasticsearch" >> /etc/hosts
- #     echo "$(getent hosts kibana.kibana | awk '{print $1}') kibana.kibana" >> /etc/hosts
- #    echo "$(getent hosts logstash.logstash | awk '{print $1}') logstash.logstash" >> /etc/hosts
-  containers:
-  - name: my-container
-    image: busybox
 ---
 
 apiVersion: v1
