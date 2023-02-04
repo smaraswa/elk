@@ -19,7 +19,7 @@ data:
         json.overwrite_keys: true
         tags: ["kubernetes"]
     output.elasticsearch:
-      hosts: ["elasticsearch-0.elasticsearch:9200", "elasticsearch-1.elasticsearch:9200", "elasticsearch-2.elasticsearch:9200"]
+      hosts: ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
     setup.kibana:
       host: "kibana:5601"
 
