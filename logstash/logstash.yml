@@ -25,7 +25,8 @@ data:
 
     output {
       elasticsearch {
-        hosts => ["elasticsearch-0:9200", "elasticsearch-1:9200", "elasticsearch-2:9200"]
+        hosts => : ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
+
       }
     }
 
@@ -54,13 +55,13 @@ spec:
               name: beats
             - containerPort: 9600
               name: http
-  #        volumeMounts:
-   #         - name: config
-    #          mountPath: /usr/share/logstash/config/logstash.yml
-     #         subPath: logstash.yml
-      #      - name: pipeline
-       #       mountPath: /usr/share/logstash/pipeline
-        #      subPath: pipeline.conf
+          volumeMounts:
+            - name: config
+              mountPath: /usr/share/logstash/config/logstash.yml
+              subPath: logstash.yml
+            - name: pipeline
+              mountPath: /usr/share/logstash/pipeline
+              subPath: pipeline.conf
       volumes:
         - name: config
           configMap:
