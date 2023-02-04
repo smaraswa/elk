@@ -8,8 +8,8 @@ data:
     cluster.name: "elasticsearch-cluster"
     node.name: ${HOSTNAME}
     network.host: 0.0.0.0
-    discovery.seed_hosts: ["elasticsearch-0", "elasticsearch-1", "elasticsearch-2"]
-    cluster.initial_master_nodes: ["elasticsearch-0", "elasticsearch-1", "elasticsearch-2"]
+    discovery.seed_hosts: ["elasticsearch-0.elasticsearch", "elasticsearch-1.elasticsearch", "elasticsearch-2.elasticsearch"]
+    cluster.initial_master_nodes: ["elasticsearch-0.elasticsearch", "elasticsearch-1.elasticsearch", "elasticsearch-2.elasticsearch"]
     
 ---
 
