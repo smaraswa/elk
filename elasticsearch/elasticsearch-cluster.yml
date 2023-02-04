@@ -88,7 +88,7 @@ spec:
  #    echo "$(getent hosts logstash.logstash | awk '{print $1}') logstash.logstash" >> /etc/hosts
   containers:
   - name: my-container
-    image: my-image
+    image: busybox
 ---
 
 apiVersion: v1
