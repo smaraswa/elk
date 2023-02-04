@@ -9,7 +9,6 @@ data:
     node.name: ${HOSTNAME}
     network.host: 0.0.0.0
     discovery.seed_hosts: ["elasticsearch-0.elasticsearch", "elasticsearch-1.elasticsearch", "elasticsearch-2.elasticsearch"]
-    cluster.initial_master_nodes: ["elasticsearch-0.elasticsearch", "elasticsearch-1.elasticsearch", "elasticsearch-2.elasticsearch"]
     discovery.zen.ping.unicast.hosts: ["elasticsearch-0.elasticsearch.elk.svc.cluster.local", "elasticsearch-1.elasticsearch.elk.svc.cluster.local", "elasticsearch-2.elasticsearch.elk.svc.cluster.local"]
     
 ---
