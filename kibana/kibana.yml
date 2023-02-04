@@ -7,7 +7,7 @@ data:
   kibana.yml: |
     server.name: kibana
     server.host: "0.0.0.0"
-    elasticsearch.hosts: ["http://elasticsearch-0:9200", "http://elasticsearch-1:9200", "http://elasticsearch-2:9200"]
+    elasticsearch.hosts: ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
 
 ---
 
@@ -55,5 +55,4 @@ spec:
     - name: http
       port: 5601
       targetPort: 5601
-  type: NodePort
-  
+  type: ClusterIP
