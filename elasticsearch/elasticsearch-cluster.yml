@@ -72,7 +72,7 @@ metadata:
 spec:
   initContainers:
   - name: init-hosts
-    image: alpine:3.7
+    image: busybox
     command:
     - sh
     - -c
