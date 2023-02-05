@@ -14,6 +14,10 @@ data:
       hosts: ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
     setup.kibana:
       host: "http://10.244.1.74:5601"
+    setup.template.name: "filebeat"
+    setup.template.pattern: "filebeat-*"  
+    monitoring:
+          enabled: true
   
 ---
 
