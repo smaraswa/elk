@@ -13,7 +13,7 @@ data:
     output.elasticsearch:
       hosts: ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
     setup.kibana:
-      host: "10.244.1.74:5601"
+      host: "http://10.244.1.74:5601"
   
 ---
 
