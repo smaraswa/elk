@@ -50,6 +50,8 @@ data:
     output.logstash:
       hosts: ["10.244.1.78:5044"]
       enabled: true
+    output.elasticsearch:
+      hosts: ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
 
 ---
 
