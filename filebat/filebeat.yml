@@ -10,7 +10,7 @@ data:
         paths:
           - /var/log/*.log
     output.logstash:
-      hosts: ["logstash.elk:5044"]
+      hosts: ["10.244.1.78:5044"]
 
 ---
 
