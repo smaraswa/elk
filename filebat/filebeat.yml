@@ -47,10 +47,9 @@ data:
         paths:
           - /var/log/*.log
     output.logstash:
-      hosts: ["10.244.1.78:5044"]
+      hosts: ["http://10.244.1.78:5044"]
 
 ---
-
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
