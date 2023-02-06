@@ -5,21 +5,15 @@ metadata:
   namespace: elk
 data:
   filebeat.yml: |
+    filebeat.autodiscover:
     filebeat.inputs:
       - type: log
         paths:
           - /var/log/*.log
     output.elasticsearch:
-      #hosts => : ["elasticsearch-0.elasticsearch:9200", "elasticsearch-1.elasticsearch:9200", elasticsearch-2.elasticsearch:9200"]
-      hosts => :  ["http://10.244.6.101:9200", "http://10.244.2.83:9200", "http://10.244.3.181:9200"]
-     
-      
+      hosts: ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
     setup.kibana:
       host: "http://10.244.1.74:5601"
-    setup.template.name: "filebeat"
-    setup.template.pattern: "filebeat-*"  
-    monitoring:
-          enabled: true
   
 ---
 
