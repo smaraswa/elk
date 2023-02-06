@@ -86,4 +86,4 @@ spec:
       targetPort: 9300
   
   clusterIP: None
-  type: ClusterIPs
+  type: ClusterIP
