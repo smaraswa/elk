@@ -47,12 +47,12 @@ data:
       - type: log
         paths:
           - /var/log/*.log
-    #output.elasticsearch:
-     # hosts: ["elasticsearch-0.elasticsearch:9200", "elasticsearch-1.elasticsearch:9200", "elasticsearch-2.elasticsearch:9200"]
+    output.elasticsearch:
+      hosts: ["elasticsearch-0.elasticsearch:9200", "elasticsearch-1.elasticsearch:9200", "elasticsearch-2.elasticsearch:9200"]
     #setup.kibana:
     #  hosts: "http://10.244.1.74:5601"
-    output.logstash:
-      hosts: "http://10.244.1.78:5044"
+    #output.logstash:
+    #  hosts: "http://10.244.1.78:5044"
   
   
 ---
