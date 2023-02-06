@@ -48,6 +48,7 @@ data:
         paths:
           - /var/log/*.log
     output.elasticsearch:
+      index: "%{[kubernetes.namespace]:filebeat}-%{[beat.version]}-%{+yyyy.MM.dd}"
       hosts: ["elasticsearch-0.elasticsearch:9200", "elasticsearch-1.elasticsearch:9200", "elasticsearch-2.elasticsearch:9200"]
     #setup.kibana:
     #  hosts: "http://10.244.1.74:5601"
