@@ -37,12 +37,7 @@ spec:
             - name: config
               mountPath: /usr/share/kibana/config/kibana.yml
               subPath: kibana.yml
-        - name: SERVER_BASEPATH
-          value: "/kibana"
-        - name: SERVER_REWRITEBASEPATH
-          value: "true"
-        - name: SERVER_PUBLICBASEURL
-          value: "http://10.1.135.135/kibana"  
+        
       volumes:
         - name: config
           configMap:
