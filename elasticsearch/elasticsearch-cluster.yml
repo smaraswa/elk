@@ -85,4 +85,4 @@ spec:
       port: 9300
       targetPort: 9300
   clusterIP: None
-  type: ClusterIP
+  type: NodePort
