@@ -112,4 +112,4 @@ spec:
     - name: http
       port: 9600
       targetPort: 9600
-  type: ClusterIP
+  type: NodePort
