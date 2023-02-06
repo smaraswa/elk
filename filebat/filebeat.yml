@@ -11,7 +11,7 @@ data:
         paths:
           - /var/log/*.log
     output.elasticsearch:
-      hosts: ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
+      hosts: ["elasticsearch-0.elasticsearch:9200", "elasticsearch-1.elasticsearch:9200", "elasticsearch-2.elasticsearch:9200"]
     setup.kibana:
       host: "http://10.244.1.74:5601"
   
