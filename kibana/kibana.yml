@@ -55,7 +55,9 @@ spec:
   selector:
     app: kibana
   ports:
-    - name: http
+    - name: posts
+      protocol: TCP
       port: 5601
       targetPort: 5601
-  type: NodePort
+      nodePort: 30360
+
