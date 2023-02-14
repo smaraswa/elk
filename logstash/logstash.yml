@@ -28,27 +28,8 @@ data:
         elasticsearch {
           #hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
           hosts => ["http://10.244.6.101:9200", "http://10.244.2.83:9200", "http://10.244.3.181:9200"]
-          index => "elk-systemlogs-%{+YYYY.MM.dd}"
       }
     }
- 
-input:
-  tcp:
-    port: 4560
-    codec: json
-
-filter:
-  date:
-    match: ["timeMillis", "UNIX_MS"]
-
-output:
-  elasticsearch:
-    hosts:
-      - "http://10.244.6.101:9200"
-      - "http://10.244.2.83:9200"
-      - "http://10.244.3.181:9200"
-    index: "mule-logs"
-
 
 ---
 
@@ -84,7 +65,7 @@ spec:
   selector:
     matchLabels:
       app: logstash
-  replicas: 3
+  replicas: 1
   template:
     metadata:
       labels:
@@ -130,4 +111,4 @@ spec:
     - name: http
       port: 9600
       targetPort: 9600
-  type: NodePort
+  type: ClusterIP
