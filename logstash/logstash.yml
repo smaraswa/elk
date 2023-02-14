@@ -32,7 +32,7 @@ data:
       }
     }
     
-   input {
+    input {
       tcp {
       port => 4560
 	  codec => json
