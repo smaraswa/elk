@@ -31,27 +31,23 @@ data:
           index => "elk-systemlogs-%{+YYYY.MM.dd}"
       }
     }
-    
-    input {
-      tcp {
-      port => 4560
-	  codec => json
-      }
-   }
+ 
+input:
+  tcp:
+    port: 4560
+    codec: json
 
-    filter {
-      date {
-      match => [ "timeMillis", "UNIX_MS" ]
-      }
-   }
+filter:
+  date:
+    match: ["timeMillis", "UNIX_MS"]
 
-    output {
-      elasticsearch {
-      hosts => ["http://10.244.6.101:9200", "http://10.244.2.83:9200", "http://10.244.3.181:9200"]
-      index => "mule-logs"
-      }
-   }
-
+output:
+  elasticsearch:
+    hosts:
+      - "http://10.244.6.101:9200"
+      - "http://10.244.2.83:9200"
+      - "http://10.244.3.181:9200"
+    index: "mule-logs"
 
 
 ---
