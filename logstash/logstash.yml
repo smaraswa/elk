@@ -15,7 +15,7 @@ data:
     }
     filter {
       grok {
-          match => { "message" => "%{COMBINEDAPACHELOG}" }
+          match => { "message" => "%{SYSLOGLINE}" }
       }
       date {
         match => [ "timestamp" , "dd/MMM/yyyy:HH:mm:ss Z" ]
@@ -41,15 +41,23 @@ metadata:
 data:
   pipeline.conf: |
     input {
-      beats {
-        port => 5044
+      tcp {
+        port => 4560
+            codec => json
+            
       }
     }
+    filter {
+      date {
+        match => [ "timeMillis", "UNIX_MS" ]
+      }
+    }  
     
     output {
       elasticsearch {
         #hosts => : ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
         hosts => ["http://10.244.6.101:9200", "http://10.244.2.83:9200", "http://10.244.3.181:9200"]
+        index => "mule-logs"
 
       }
     }
