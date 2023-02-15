@@ -42,7 +42,7 @@ data:
   pipeline.conf: |
     input {
       tcp {
-        port => 4560
+        port => 5044
             codec => json
             
       }
