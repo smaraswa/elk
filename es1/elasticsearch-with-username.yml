@@ -10,30 +10,8 @@ data:
     network.host: 0.0.0.0
     discovery.seed_hosts: ["elasticsearch-0.elasticsearch", "elasticsearch-1.elasticsearch", "elasticsearch-2.elasticsearch"]
     cluster.initial_master_nodes: ["elasticsearch-0", "elasticsearch-1", "elasticsearch-2"]
-    xpack.security.enabled: true
-    xpack.security.authc:
-      realms:
-        native:
-          native1:
-            order: 0
-      users:
-        - username: superuser
-          password: superuser
-          roles: superuser
-        - username: rouser
-          password: rouser
-          roles: readonly
-      roles:
-        - name: superuser
-          privileges:
-            - all
-          indices:
-            - '*'
-        - name: readonly
-          privileges:
-            - read
-          indices:
-            - '*'
+    xpack.security.enabled: false
+    
 
 ---
 apiVersion: storage.k8s.io/v1
