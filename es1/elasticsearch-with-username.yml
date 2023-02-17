@@ -16,6 +16,8 @@ data:
       order: 0
       native1:
         enabled: true
+        authentication.enabled: true
+        authorization.enabled: true
         users:
           - username: superuser
             password: superuser
@@ -25,7 +27,6 @@ data:
             roles: rouser
     xpack.security.authc.token.enabled: true
 
-    
     
 ---
 
