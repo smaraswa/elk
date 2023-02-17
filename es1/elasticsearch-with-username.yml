@@ -5,11 +5,11 @@ metadata:
 spec:
   storageClassName: standard
   capacity:
-    storage: 10Gi
+    storage: 2Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/data/elasticsearch"
+    path: "/esdata"
 
 ---
 
@@ -23,7 +23,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 10Gi
+      storage: 2Gi
 
 ---
 
@@ -43,7 +43,7 @@ data:
 
 ---
 
-apiVersion: apps/v1
+apiVersion: apps/v1 
 kind: StatefulSet
 metadata:
   name: elasticsearch
