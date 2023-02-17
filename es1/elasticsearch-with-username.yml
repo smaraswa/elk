@@ -11,9 +11,9 @@ data:
     discovery.seed_hosts: ["elasticsearch-0.elasticsearch", "elasticsearch-1.elasticsearch", "elasticsearch-2.elasticsearch"]
     cluster.initial_master_nodes: ["elasticsearch-0", "elasticsearch-1", "elasticsearch-2"]
     xpack.security.enabled: false
-    
 
 ---
+
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
@@ -22,33 +22,22 @@ provisioner: kubernetes.io/no-provisioner
 volumeBindingMode: WaitForFirstConsumer
 
 ---
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: elasticsearch-pv
-spec:
-  capacity:
-    storage: 10Gi
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: standard
-  hostPath:
-    path: /data/elasticsearch
 
----
-apiVersion: v1
 kind: PersistentVolumeClaim
+apiVersion: v1
 metadata:
   name: elasticsearch-pvc
+  namespace: elk
 spec:
+  storageClassName: standard
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
       storage: 10Gi
-  storageClassName: standard
 
 ---
+
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -86,7 +75,7 @@ spec:
             - name: config
               mountPath: /usr/share/elasticsearch/config/elasticsearch.yml
               subPath: elasticsearch.yml
-            - name: esdata
+            - name: elasticsearch-data
               mountPath: /usr/share/elasticsearch/data
           resources:
             requests:
@@ -99,7 +88,7 @@ spec:
         - name: config
           configMap:
             name: elasticsearch-config
-        - name: esdata
+        - name: elasticsearch-data
           persistentVolumeClaim:
             claimName: elasticsearch-pvc
 
@@ -123,6 +112,7 @@ spec:
   type: ClusterIP
 
 ---
+
 apiVersion: v1
 kind: Service
 metadata:
