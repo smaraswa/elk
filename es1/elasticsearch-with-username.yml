@@ -3,24 +3,13 @@ kind: PersistentVolume
 metadata:
   name: elasticsearch-pv
 spec:
+  storageClassName: standard
   capacity:
     storage: 10Gi
   accessModes:
     - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Retain
-  storageClassName: standard
-  local:
-    path: /mnt/data
-  nodeAffinity:
-    required:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - node1
-                - node2
-                - node3
+  hostPath:
+    path: "/mnt/data/elasticsearch"
 
 ---
 
@@ -29,12 +18,12 @@ kind: PersistentVolumeClaim
 metadata:
   name: elasticsearch-pvc
 spec:
+  storageClassName: standard
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
       storage: 10Gi
-  storageClassName: standard
 
 ---
 
@@ -50,6 +39,7 @@ data:
     discovery.seed_hosts: ["elasticsearch-0.elasticsearch", "elasticsearch-1.elasticsearch", "elasticsearch-2.elasticsearch"]
     cluster.initial_master_nodes: ["elasticsearch-0", "elasticsearch-1", "elasticsearch-2"]
     xpack.security.enabled: false
+    path.data: /esdata
 
 ---
 
@@ -58,11 +48,11 @@ kind: StatefulSet
 metadata:
   name: elasticsearch
 spec:
+  serviceName: elasticsearch
+  replicas: 3
   selector:
     matchLabels:
       app: elasticsearch
-  serviceName: elasticsearch
-  replicas: 3
   template:
     metadata:
       labels:
@@ -71,6 +61,13 @@ spec:
       containers:
         - name: elasticsearch
           image: docker.elastic.co/elasticsearch/elasticsearch:7.9.0
+          resources:
+            limits:
+              cpu: "2"
+              memory: 4Gi
+            requests:
+              cpu: "1"
+              memory: 2Gi
           env:
             - name: NAMESPACE
               valueFrom:
@@ -86,23 +83,19 @@ spec:
             - containerPort: 9300
               name: transport
           volumeMounts:
-            - name: data
-              mountPath: /usr/share/elasticsearch/data
-          resources:
-            requests:
-              cpu: 500m
-              memory: 1Gi
-            limits:
-              cpu: 1000m
-              memory: 2Gi
+            - name: elasticsearch-data
+              mountPath: /esdata
+      initContainers:
+        - name: fix-permissions
+          image: busybox
+          command: ["sh", "-c", "chown -R 1000:1000 /esdata"]
+          volumeMounts:
+            - name: elasticsearch-data
+              mountPath: /esdata
       volumes:
-        - name: data
+        - name: elasticsearch-data
           persistentVolumeClaim:
             claimName: elasticsearch-pvc
-          
-        - name: config
-          configMap:
-            name: elasticsearch-config
 
 ---
 
@@ -120,6 +113,7 @@ spec:
     - name: transport
       port: 9300
       targetPort: 9300
+  clusterIP: None
 
 ---
 
