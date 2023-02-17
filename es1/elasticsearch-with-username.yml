@@ -55,11 +55,20 @@ spec:
       app: elasticsearch
   serviceName: elasticsearch
   replicas: 3
+  updateStrategy:
+    type: RollingUpdate
   template:
     metadata:
       labels:
         app: elasticsearch
     spec:
+      initContainers:
+        - name: chown
+          image: busybox:1.31.1
+          command: ['sh', '-c', 'chown -R 1000:1000 /usr/share/elasticsearch/data']
+          volumeMounts:
+            - name: esdata
+              mountPath: /usr/share/elasticsearch/data
       containers:
         - name: elasticsearch
           image: docker.elastic.co/elasticsearch/elasticsearch:7.9.0
@@ -105,7 +114,7 @@ spec:
       accessModes: ["ReadWriteOnce"]
       resources:
         requests:
-          storage: 2Gi
+          storage: 10Gi
       storageClassName: local-storage
       volumeMode: Filesystem
       selector:
