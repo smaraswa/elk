@@ -1,8 +1,47 @@
 apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: elasticsearch-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: standard
+  local:
+    path: /mnt/data
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - node1
+                - node2
+                - node3
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: elasticsearch-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: standard
+
+---
+
+apiVersion: v1
 kind: ConfigMap
 metadata:
   name: elasticsearch-config
-  namespace: elk
 data:
   elasticsearch.yml: |
     cluster.name: "elasticsearch-cluster"
@@ -14,35 +53,10 @@ data:
 
 ---
 
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: standard
-provisioner: kubernetes.io/no-provisioner
-volumeBindingMode: WaitForFirstConsumer
-
----
-
-kind: PersistentVolumeClaim
-apiVersion: v1
-metadata:
-  name: elasticsearch-pvc
-  namespace: elk
-spec:
-  storageClassName: standard
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 10Gi
-
----
-
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: elasticsearch
-  namespace: elk
 spec:
   selector:
     matchLabels:
@@ -72,10 +86,7 @@ spec:
             - containerPort: 9300
               name: transport
           volumeMounts:
-            - name: config
-              mountPath: /usr/share/elasticsearch/config/elasticsearch.yml
-              subPath: elasticsearch.yml
-            - name: elasticsearch-data
+            - name: data
               mountPath: /usr/share/elasticsearch/data
           resources:
             requests:
@@ -85,12 +96,13 @@ spec:
               cpu: 1000m
               memory: 2Gi
       volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: elasticsearch-pvc
+          
         - name: config
           configMap:
             name: elasticsearch-config
-        - name: elasticsearch-data
-          persistentVolumeClaim:
-            claimName: elasticsearch-pvc
 
 ---
 
@@ -98,7 +110,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: elasticsearch
-  namespace: elk
 spec:
   selector:
     app: elasticsearch
@@ -109,7 +120,6 @@ spec:
     - name: transport
       port: 9300
       targetPort: 9300
-  type: ClusterIP
 
 ---
 
@@ -117,7 +127,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: elasticsearch-public
-  namespace: elk
 spec:
   selector:
     app: elasticsearch
