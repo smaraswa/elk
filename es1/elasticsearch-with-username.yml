@@ -1,36 +1,8 @@
 apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: elasticsearch-pv
-spec:
-  storageClassName: standard
-  capacity:
-    storage: 2Gi
-  accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: "/esdata"
-
----
-
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: elasticsearch-pvc
-spec:
-  storageClassName: standard
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 2Gi
-
----
-
-apiVersion: v1
 kind: ConfigMap
 metadata:
   name: elasticsearch-config
+  namespace: elk
 data:
   elasticsearch.yml: |
     cluster.name: "elasticsearch-cluster"
@@ -39,35 +11,73 @@ data:
     discovery.seed_hosts: ["elasticsearch-0.elasticsearch", "elasticsearch-1.elasticsearch", "elasticsearch-2.elasticsearch"]
     cluster.initial_master_nodes: ["elasticsearch-0", "elasticsearch-1", "elasticsearch-2"]
     xpack.security.enabled: false
-    path.data: /esdata
+    
+    
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: elasticsearch-pv
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: standard
+  hostPath:
+    path: /mnt/data/elasticsearch
 
 ---
 
-apiVersion: apps/v1 
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: elasticsearch-pvc
+  namespace: elk
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 5Gi
+
+---
+
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: standard
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: Immediate
+reclaimPolicy: Retain
+allowVolumeExpansion: true
+
+---
+
+apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: elasticsearch
+  namespace: elk
 spec:
-  serviceName: elasticsearch
-  replicas: 3
   selector:
     matchLabels:
       app: elasticsearch
+  serviceName: elasticsearch
+  replicas: 3
   template:
     metadata:
       labels:
         app: elasticsearch
+
+    
     spec:
       containers:
         - name: elasticsearch
           image: docker.elastic.co/elasticsearch/elasticsearch:7.9.0
-          resources:
-            limits:
-              cpu: "2"
-              memory: 4Gi
-            requests:
-              cpu: "1"
-              memory: 2Gi
+          
           env:
             - name: NAMESPACE
               valueFrom:
@@ -77,17 +87,30 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+             
           ports:
             - containerPort: 9200
               name: http
             - containerPort: 9300
               name: transport
           volumeMounts:
-            - name: elasticsearch-data
-              mountPath: /esdata
-     
+            - name: config
+              mountPath: /usr/share/elasticsearch/config/elasticsearch.yml
+              subPath: elasticsearch.yml
+            - name: data
+              mountPath: /usr/share/elasticsearch/data
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: 1000m
+              memory: 2Gi
       volumes:
-        - name: elasticsearch-data
+        - name: config
+          configMap:
+            name: elasticsearch-config
+        - name: data
           persistentVolumeClaim:
             claimName: elasticsearch-pvc
 
@@ -97,6 +120,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: elasticsearch
+  namespace: elk
 spec:
   selector:
     app: elasticsearch
@@ -107,19 +131,17 @@ spec:
     - name: transport
       port: 9300
       targetPort: 9300
-  clusterIP: None
-
+  type: ClusterIP
+  
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
   name: elasticsearch-public
+  namespace: elk
 spec:
   selector:
     app: elasticsearch
   ports:
     - name: http
       port: 9200
-      targetPort: 9200
-  type: NodePort
