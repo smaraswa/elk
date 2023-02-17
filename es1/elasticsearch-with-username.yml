@@ -44,7 +44,6 @@ provisioner: kubernetes.io/no-provisioner
 volumeBindingMode: WaitForFirstConsumer
 
 ---
-
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -57,6 +56,7 @@ spec:
   storageClassName: standard
   hostPath:
     path: /data/elasticsearch
+
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -124,6 +124,7 @@ spec:
         - name: esdata
           persistentVolumeClaim:
             claimName: elasticsearch-pvc
+
 ---
 
 apiVersion: v1
