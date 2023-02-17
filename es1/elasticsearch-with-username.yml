@@ -85,13 +85,7 @@ spec:
           volumeMounts:
             - name: elasticsearch-data
               mountPath: /esdata
-      initContainers:
-        - name: fix-permissions
-          image: busybox
-          command: ["sh", "-c", "chown -R 1000:1000 /esdata"]
-          volumeMounts:
-            - name: elasticsearch-data
-              mountPath: /esdata
+     
       volumes:
         - name: elasticsearch-data
           persistentVolumeClaim:
