@@ -16,24 +16,21 @@ data:
         native:
           native1:
             order: 0
-      users:
-        - username: superuser
-          password: superuser
-          roles: superuser
-        - username: rouser
-          password: rouser
-          roles: readonly
-      roles:
-        - name: superuser
-          privileges:
-            - all
-          indices:
-            - '*'
-        - name: readonly
-          privileges:
-            - read
-          indices:
-            - '*'
+    users:
+      - username: superuser
+        password: superuser
+        roles: superuser
+      - username: rouser
+        password: rouser
+        roles: readonly
+    roles:
+      superuser:
+        privileges: ["all"]
+        indices: ["*"]
+    readonly:
+      privileges: ["read"]
+      indices: ["*"]
+
 
 ---
 apiVersion: storage.k8s.io/v1
