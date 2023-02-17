@@ -11,17 +11,24 @@ data:
     discovery.seed_hosts: ["elasticsearch-0.elasticsearch", "elasticsearch-1.elasticsearch", "elasticsearch-2.elasticsearch"]
     cluster.initial_master_nodes: ["elasticsearch-0", "elasticsearch-1", "elasticsearch-2"]
     xpack.security.enabled: true
-    xpack.security.authc.realms.native.native1.order: 0
-    xpack.security.authc.realms.native.native1.enabled: true
-    xpack.security.authc.realms.native.native1.users:
-      - username: superuser
-        password: superuser
-        roles: superuser
-      - username: rouser
-        password: rouser
-        roles: read_only
+    xpack.security.authc:
+      realms:
+        native:
+          native1:
+            order: 0
+      authentication:
+        token:
+          enabled: true
+      users:
+        - username: superuser
+          password: superuser
+          roles: superuser
+        - username: rouser
+          password: rouser
+          roles: read_only
 
 
+    
     
 ---
 
