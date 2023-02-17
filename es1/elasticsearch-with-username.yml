@@ -43,8 +43,6 @@ metadata:
 provisioner: kubernetes.io/no-provisioner
 volumeBindingMode: WaitForFirstConsumer
 
-
-
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -99,20 +97,31 @@ spec:
         - name: esdata
           persistentVolumeClaim:
             claimName: elasticsearch-pvc
-
-  volumeClaimTemplates:
-  - metadata:
-      name: elasticsearch-pvc
-    spec:
-      accessModes: ["ReadWriteOnce"]
-      resources:
-        requests:
-          storage: 10Gi
-      storageClassName: standard
-      volumeMode: Filesystem
-      selector:
-        matchLabels:
-          app: elasticsearch
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: elasticsearch-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: standard
+  hostPath:
+    path: /data/elasticsearch
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: elasticsearch-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: standard
 
 ---
 
@@ -132,7 +141,6 @@ spec:
       port: 9300
       targetPort: 9300
   type: ClusterIP
-
 
 ---
 apiVersion: v1
