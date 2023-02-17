@@ -111,7 +111,7 @@ spec:
       resources:
         requests:
           storage: 10Gi
-      storageClassName: local-storage
+      storageClassName: standard
       volumeMode: Filesystem
       selector:
         matchLabels:
