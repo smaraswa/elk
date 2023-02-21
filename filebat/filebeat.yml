@@ -22,6 +22,7 @@ spec:
   selector:
     matchLabels:
       app: filebeat
+  replicas: 3
   template:
     metadata:
       labels:
