@@ -38,10 +38,9 @@ spec:
           - name: ELASTICSEARCH_USER
             value: "elastic"
           - name: ELASTICSEARCH_PASSWORD
-            valueFrom:
-              secretFrom:
-                name: elasticsearch-pw-elastic
-                key: password
+            value: "changeme"
+            
+                
           ports:
             - containerPort: 5601
               name: http
