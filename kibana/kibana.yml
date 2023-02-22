@@ -11,13 +11,10 @@ data:
     #elasticsearch.hosts: ["http://10.244.3.222:9200", "http://10.244.6.144:9200", "http://10.244.2.117:9200"]
     xpack.security.enabled: true
     xpack.encryptedSavedObjects.encryptionKey: 'fhjskloppd678ehkdfdlliverpoolfcr'
-    
-    username: ${ELASTICSEARCH_USER}
-    password: ${ELASTICSEARCH_PASSWORD}
+   
 
     
-    
-    
+   
 
 ---
 
@@ -39,14 +36,6 @@ spec:
       containers:
         - name: kibana
           image: docker.elastic.co/kibana/kibana:7.9.0
-          env:
-          - name: ELASTICSEARCH_USER
-            value: "elastic"
-          - name: ELASTICSEARCH_PASSWORD
-            valueFrom:
-            secretKeyRef:
-              name: elasticsearch-pw-elastic
-              key: changeme
             
                 
           ports:
