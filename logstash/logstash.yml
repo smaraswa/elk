@@ -71,7 +71,7 @@ data:
   pipeline.conf: |
     input {
       http {
-        port => 5044
+        port => 9600
             codec => json
             
       }
@@ -144,9 +144,10 @@ spec:
     - name: beats
       port: 5044
       targetPort: 5044
-      nodePort: 31400
+      
     - name: http
       port: 9600
       targetPort: 9600
+      nodePort: 31400
      
   type: NodePort
