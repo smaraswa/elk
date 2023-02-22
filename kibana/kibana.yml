@@ -46,7 +46,7 @@ spec:
             valueFrom:
             secretKeyRef:
               name: elasticsearch-pw-elastic
-              key: password
+              key: changeme
             
                 
           ports:
