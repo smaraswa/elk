@@ -147,3 +147,5 @@ spec:
   ports:
     - name: http
       port: 9200
+      nodePort: 31500
+  type: NodePort
