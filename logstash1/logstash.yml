@@ -107,9 +107,30 @@ spec:
               name: http
           volumeMounts:
             - name: logstash-config
-              mountPath: /usr/share/logstash/config
+              mountPath: /usr/share/logstash/config/logstash.yml
+              subPath: logstash.yml
             - name: logstash-pipeline
-              mountPath: /usr/share/logstash/pipeline
+              mountPath: /usr/share/logstash/pipeline/pipeline.conf
+              subPath: pipeline.conf
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              memory: "2Gi"
+              cpu: "1"
+          readinessProbe:
+            tcpSocket:
+              port: 5044
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: 5044
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
       volumes:
         - name: logstash-config
           configMap:
@@ -117,6 +138,7 @@ spec:
         - name: logstash-pipeline
           configMap:
             name: logstash-pipeline
+
 
 ---
 
