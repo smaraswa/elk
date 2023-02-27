@@ -10,7 +10,7 @@ data:
   logstash.conf: |
     input {
       http {
-        port => 8080
+        port => 5044
       }
     }
     filter {
@@ -46,7 +46,7 @@ spec:
         - name: logstash
           image: docker.elastic.co/logstash/logstash:7.9.0
           ports:
-            - containerPort: 8080
+            - containerPort: 5044
               name: http
         #  volumeMounts:
          #   - name: config
@@ -82,7 +82,7 @@ spec:
     app: logstash
   ports:
     - name: http
-      port: 8080
-      targetPort: 8080
-      nodePort: 31400
+      port: 5044
+      targetPort: 5044
+      nodePort: 32000
   type: NodePort
