@@ -11,21 +11,22 @@ data:
     input {
       http {
         port => 8080
-        codec => json
       }
     }
     filter {
-      date {
-        match => [ "timeMillis", "UNIX_MS" ]
+      grok {
+        match => { "message" => "%{COMBINEDAPACHELOG}" }
       }
     }
     output {
       elasticsearch {
         hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
-        index => "postman-logs"
+        index => "httplogs"
       }
     }
+
 ---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -57,26 +58,20 @@ spec:
           resources:
             limits:
               memory: "2Gi"
-            requests:
-              cpu: 100m
-              memory: "2Gi"
-          volumeClaimTemplates:
-            - metadata:
-                name: data
-              spec:
-                accessModes: ["ReadWriteOnce"]
-                resources:
-                  requests:
-                    storage: 5Gi
-                storageClassName: standard
-     volumes:
-       - name: config
-         configMap:
-           name: logstash-config
-       - name: pipeline
-         configMap:
-           name: logstash-pipeline
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+      volumes:
+        - name: config
+          configMap:
+            name: logstash-config
+        - name: pipeline
+          configMap:
+            name: logstash-pipeline
+
 ---
+
 apiVersion: v1
 kind: Service
 metadata:
@@ -89,5 +84,5 @@ spec:
     - name: http
       port: 8080
       targetPort: 8080
-      nodePort: 31500
+      nodePort: 32000
   type: NodePort
