@@ -48,27 +48,27 @@ spec:
           ports:
             - containerPort: 8080
               name: http
-          volumeMounts:
-            - name: config
-              mountPath: /usr/share/logstash/config/logstash.yml
-              subPath: logstash.yml
-            - name: pipeline
-              mountPath: /usr/share/logstash/pipeline
-              subPath: pipeline.conf
-          resources:
-            limits:
-              memory: "2Gi"
-          securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
-            fsGroup: 1000
-      volumes:
-        - name: config
-          configMap:
-            name: logstash-config
-        - name: pipeline
-          configMap:
-            name: logstash-pipeline
+        #  volumeMounts:
+         #   - name: config
+          #    mountPath: /usr/share/logstash/config/logstash.yml
+           #   subPath: logstash.yml
+           # - name: pipeline
+           #   mountPath: /usr/share/logstash/pipeline
+           #   subPath: pipeline.conf
+          #esources:
+           # limits:
+           #   memory: "2Gi"
+          #ecurityContext:
+           # runAsUser: 1000
+           # runAsGroup: 1000
+           # fsGroup: 1000
+      #volumes:
+       # - name: config
+       #   configMap:
+        #    name: logstash-config
+        #- name: pipeline
+        #  configMap:
+        #    name: logstash-pipeline
 
 ---
 
