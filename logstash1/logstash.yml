@@ -9,19 +9,66 @@ data:
     path.config: /usr/share/logstash/pipeline
   logstash.conf: |
     input {
-      http {
+      beats {
         port => 5044
-      }
+    }
     }
     filter {
-      grok {
-        match => { "message" => "%{COMBINEDAPACHELOG}" }
-      }
+      if [type] == "syslog" {
+        grok {
+          match => { "message" => "%{SYSLOGLINE}" }
+    }
+        date {
+          match => [ "timestamp", "MMM  d HH:mm:ss", "MMM dd HH:mm:ss" ]
+        }
+    }
     }
     output {
       elasticsearch {
         hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
-        index => "httplogs"
+        index => "%{[@metadata][beat]}-%{+YYYY.MM.dd}"
+      }
+    }
+
+
+    input {
+      tcp {
+        port => 5044
+          codec => json
+      }
+    }
+
+    filter {
+      date {
+        match => [ "timeMillis", "UNIX_MS" ]
+      }
+    }
+
+    output {
+      elasticsearch {
+        hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
+        index => "mule-logs"
+      }
+    }
+
+
+    input {
+      http {
+        port => 5050
+          codec => json
+     }
+    }
+
+    filter {
+      date {
+      match => [ "timeMillis", "UNIX_MS" ]
+    }
+    }
+
+    output {
+      elasticsearch {
+        hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
+        index => "mule-logs-http"
       }
     }
 
