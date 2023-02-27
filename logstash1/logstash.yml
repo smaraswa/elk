@@ -17,7 +17,7 @@ data:
         codec => json
       }
       http {
-        port => 5046
+        port => 80
         codec => json
       }
     }
@@ -103,7 +103,7 @@ spec:
               name: beats
             - containerPort: 5045
               name: tcp
-            - containerPort: 5046
+            - containerPort: 80
               name: http
           volumeMounts:
             - name: logstash-config
@@ -160,7 +160,7 @@ spec:
       targetPort: 5045
       nodePort: 31300
     - name: http
-      port: 5046
-      targetPort: 5046
+      port: 80
+      targetPort: 80
       nodePort: 31400
   type: NodePort
