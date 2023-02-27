@@ -12,55 +12,56 @@ data:
       beats {
         port => 5044
       }
-    }
-    filter {
-      grok {
-          match => { "message" => "%{SYSLOGLINE}" }
-      }
-      date {
-        match => [ "timestamp" , "dd/MMM/yyyy:HH:mm:ss Z" ]
-      }
-      geoip {
-          source => "clientip"
-        }
-      }
-      output {
-        elasticsearch {
-          hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
-          #hosts => ["http://10.244.6.101:9200", "http://10.244.2.83:9200", "http://10.244.3.181:9200"]
-      }
-    }
-
----
-
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: logstash-pipeline
-  namespace: elk
-data:
-  pipeline.conf: |
-    input {
       tcp {
         port => 5045
-            codec => json
-            
+        codec => json
+      }
+      http {
+        port => 5046
+        codec => json
       }
     }
     filter {
-      date {
-        match => [ "timeMillis", "UNIX_MS" ]
-      }
-    }  
-    
-    output {
-      elasticsearch {
-        hosts => : ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
-        #hosts => ["http://10.244.6.101:9200", "http://10.244.2.83:9200", "http://10.244.3.181:9200"]
-        index => "mule-logs"
-
+      if [type] == "beats" {
+        grok {
+          match => { "message" => "%{SYSLOGLINE}" }
+        }
+        date {
+          match => [ "timestamp" , "dd/MMM/yyyy:HH:mm:ss Z" ]
+        }
+        geoip {
+          source => "clientip"
+        }
+      } else if [type] == "tcp" {
+        date {
+          match => [ "timeMillis", "UNIX_MS" ]
+        }
+      } else if [type] == "http" {
+        date {
+          match => [ "timeMillis", "UNIX_MS" ]
+        }
       }
     }
+    output {
+      if [type] == "beats" {
+        elasticsearch {
+          hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
+          index => "beats-logs"
+        }
+      } else if [type] == "tcp" {
+        elasticsearch {
+          hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
+          index => "tcp-logs"
+        }
+      } else if [type] == "http" {
+        elasticsearch {
+          hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
+          index => "http-logs"
+        }
+      }
+    }
+
+---
 
 apiVersion: v1
 kind: ConfigMap
@@ -69,29 +70,16 @@ metadata:
   namespace: elk
 data:
   pipeline.conf: |
-    input {
-      http {
-        port => 5046
-            codec => json
-            
-      }
-    }
-    filter {
-      date {
-        match => [ "timeMillis", "UNIX_MS" ]
-      }
-    }  
-    
     output {
-      elasticsearch {
-        hosts => : ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
-        #hosts => ["http://10.244.6.101:9200", "http://10.244.2.83:9200", "http://10.244.3.181:9200"]
-        index => "mule-http-logs"
+      if [type] == "tcp" {
+        elasticsearch {
+          hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
+          index => "tcp-logs"
+        }
       }
     }
 
 ---
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -117,20 +105,18 @@ spec:
               name: tcp
             - containerPort: 5046
               name: http
-        #  volumeMounts:
-        #    - name: config
-         #     mountPath: /usr/share/logstash/config/logstash.yml
-        #    subPath: logstash.yml
-        #   - name: pipeline
-        #     mountPath: /usr/share/logstash/pipeline
-        #     subPath: pipeline.conf
-     # volumes:
-     #   - name: config
-     #     configMap:
-     #      name: logstash-config
-     #   - name: pipeline
-     #    configMap:
-     #      name: logstash-pipeline
+          volumeMounts:
+            - name: logstash-config
+              mountPath: /usr/share/logstash/config
+            - name: logstash-pipeline
+              mountPath: /usr/share/logstash/pipeline
+      volumes:
+        - name: logstash-config
+          configMap:
+            name: logstash-config
+        - name: logstash-pipeline
+          configMap:
+            name: logstash-pipeline
 
 ---
 
@@ -147,15 +133,12 @@ spec:
       port: 5044
       targetPort: 5044
       nodePort: 31200
-
     - name: tcp
       port: 5045
-      targetPort: 5044
+      targetPort: 5045
       nodePort: 31300
-      
     - name: http
       port: 5046
       targetPort: 5046
       nodePort: 31400
-     
   type: NodePort
