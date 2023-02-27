@@ -119,18 +119,7 @@ spec:
             limits:
               memory: "2Gi"
               cpu: "1"
-          readinessProbe:
-            tcpSocket:
-              port: 5044
-            initialDelaySeconds: 10
-            periodSeconds: 10
-            timeoutSeconds: 5
-          livenessProbe:
-            tcpSocket:
-              port: 5044
-            initialDelaySeconds: 10
-            periodSeconds: 10
-            timeoutSeconds: 5
+          
       volumes:
         - name: logstash-config
           configMap:
