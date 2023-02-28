@@ -7,11 +7,42 @@ data:
   logstash.yml: |
     http.host: "0.0.0.0"
     path.config: /usr/share/logstash/pipeline
-    xpack.monitoring.enabled: false
   logstash.conf: |
     input {
-      http {
-        port => 9600
+      beats {
+        port => 5044
+      }
+    }
+    filter {
+      grok {
+          match => { "message" => "%{SYSLOGLINE}" }
+      }
+      date {
+        match => [ "timestamp" , "dd/MMM/yyyy:HH:mm:ss Z" ]
+      }
+      geoip {
+          source => "clientip"
+        }
+      }
+      output {
+        elasticsearch {
+          hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
+          index => "mule-http-logs"
+      }
+    }
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logstash-pipeline
+  namespace: elk
+data:
+  pipeline.conf: |
+    input {
+      tcp {
+        port => 5044
         codec => json
       }
     }
@@ -19,13 +50,14 @@ data:
       date {
         match => [ "timeMillis", "UNIX_MS" ]
       }
-    }
+    }  
     output {
       elasticsearch {
         hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
         index => "mule-http-logs"
       }
     }
+
 ---
 
 apiVersion: apps/v1
@@ -47,6 +79,8 @@ spec:
         - name: logstash
           image: docker.elastic.co/logstash/logstash:7.9.0
           ports:
+            - containerPort: 5044
+              name: beats
             - containerPort: 9600
               name: http
           volumeMounts:
@@ -63,6 +97,7 @@ spec:
         - name: pipeline
           configMap:
             name: logstash-pipeline
+
 ---
 
 apiVersion: v1
@@ -74,6 +109,10 @@ spec:
   selector:
     app: logstash
   ports:
+    - name: beats
+      port: 5044
+      targetPort: 5044
+      nodePort: 31300
     - name: http
       port: 9600
       targetPort: 9600
