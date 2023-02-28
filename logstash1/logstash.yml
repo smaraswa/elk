@@ -27,7 +27,7 @@ data:
       output {
         elasticsearch {
           hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
-          index => "mule-http-logs"
+          #hosts => ["http://10.244.6.101:9200", "http://10.244.2.83:9200", "http://10.244.3.181:9200"]
       }
     }
 
@@ -43,7 +43,8 @@ data:
     input {
       tcp {
         port => 5044
-        codec => json
+            codec => json
+            
       }
     }
     filter {
@@ -51,9 +52,40 @@ data:
         match => [ "timeMillis", "UNIX_MS" ]
       }
     }  
+    
     output {
       elasticsearch {
-        hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
+        hosts => : ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
+        #hosts => ["http://10.244.6.101:9200", "http://10.244.2.83:9200", "http://10.244.3.181:9200"]
+        index => "mule-logs"
+
+      }
+    }
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logstash-pipeline
+  namespace: elk
+data:
+  pipeline.conf: |
+    input {
+      http {
+        port => 9600
+            codec => json
+            
+      }
+    }
+    filter {
+      date {
+        match => [ "timeMillis", "UNIX_MS" ]
+      }
+    }  
+    
+    output {
+      elasticsearch {
+        hosts => : ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
+        #hosts => ["http://10.244.6.101:9200", "http://10.244.2.83:9200", "http://10.244.3.181:9200"]
         index => "mule-http-logs"
       }
     }
@@ -95,8 +127,8 @@ spec:
           configMap:
             name: logstash-config
         - name: pipeline
-          configMap:
-            name: logstash-pipeline
+         configMap:
+           name: logstash-pipeline
 
 ---
 
@@ -113,8 +145,10 @@ spec:
       port: 5044
       targetPort: 5044
       nodePort: 31300
+      
     - name: http
       port: 9600
       targetPort: 9600
       nodePort: 31400
+     
   type: NodePort
