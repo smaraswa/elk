@@ -36,38 +36,13 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: logstash-pipeline
-  namespace: elk
-data:
-  pipeline.conf: |
-    input {
-      tcp {
-        port => 5045
-        codec => json
-      }
-    }
-    filter {
-      date {
-        match => [ "timeMillis", "UNIX_MS" ]
-      }
-    }
-    output {
-      elasticsearch {
-        hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
-        index => "mule-http-logs"
-      }
-    }
-  
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: logstash-pipeline
+  name: logstash-pipeline-http
   namespace: elk
 data:
   pipeline.conf: |
     input {
       http {
-        port => 5046
+        port => 5045
         codec => json
       }
     }
@@ -108,22 +83,42 @@ spec:
               name: beats
             - containerPort: 5045
               name: http
-            - containerPort: 5046
-              name: tcp
-         # volumeMounts:
-         #   - name: config
-         #     mountPath: /usr/share/logstash/config/logstash.yml
-         #     subPath: logstash.yml
-         #   - name: pipeline
-         #     mountPath: /usr/share/logstash/pipeline/logstash.conf
-         #     subPath: logstash.conf
+          volumeMounts:
+            - name: config
+              mountPath: /usr/share/logstash/config/logstash.yml
+              subPath: logstash.yml
+            - name: pipeline-beats
+              mountPath: /usr/share/logstash/pipeline/logstash.conf
+              subPath: logstash.conf
+            - name: pipeline-http
+              mountPath: /usr/share/logstash/pipeline/pipeline-http.conf
+              subPath: pipeline.conf
       volumes:
         - name: config
           configMap:
             name: logstash-config
-        - name: pipeline
+        - name: pipeline-beats
           configMap:
-            name: logstash-pipeline
+            name: logstash-pipeline-beats
+        - name: pipeline-http
+          configMap:
+            name: logstash-pipeline-http
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: logstash
+  namespace: elk
+spec:
+  selector:
+    app: logstash
+  ports:
+    - name: beats
+      port: 5044
+      targetPort: 5044
+
 
 ---
 
@@ -141,14 +136,10 @@ spec:
       targetPort: 5044
       nodePort: 31200
       
-    - name: tcp
+    - name: http
       port: 5045
       targetPort: 5045
-      nodePort: 31300
-      
-    - name: http
-      port: 5046
-      targetPort: 5046
       nodePort: 31400
+
      
   type: NodePort
