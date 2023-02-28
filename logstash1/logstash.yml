@@ -176,6 +176,6 @@ spec:
     - name: http
       port: 5045
       targetPort: 5045
-      nodePort: 31500
+      nodePort: 31400
      
   type: NodePort
