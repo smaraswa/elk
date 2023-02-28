@@ -57,6 +57,31 @@ data:
         index => "mule-http-logs"
       }
     }
+  
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logstash-pipeline
+  namespace: elk
+data:
+  pipeline.conf: |
+    input {
+      http {
+        port => 5045
+        codec => json
+      }
+    }
+    filter {
+      date {
+        match => [ "timeMillis", "UNIX_MS" ]
+      }
+    }
+    output {
+      elasticsearch {
+        hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
+        index => "mule-http-logs"
+      }
+    }
 
 ---
 
@@ -81,7 +106,7 @@ spec:
           ports:
             - containerPort: 5044
               name: beats
-            - containerPort: 9600
+            - containerPort: 5045
               name: http
          # volumeMounts:
          #   - name: config
@@ -115,8 +140,8 @@ spec:
       nodePort: 31300
       
     - name: http
-      port: 9600
-      targetPort: 9600
+      port: 5045
+      targetPort: 5045
       nodePort: 31400
      
   type: NodePort
