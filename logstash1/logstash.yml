@@ -36,6 +36,31 @@ data:
     }
 
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logstash-pipeline-http
+  namespace: elk
+data:
+  pipeline.conf: |
+    input {
+      http {
+        port => 5045
+        codec => "json"
+      }
+    }
+    filter {
+      date {
+        match => [ "timeMillis", "UNIX_MS" ]
+      }
+    }
+    output {
+      elasticsearch {
+        hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
+        index => "mule-http-logs"
+      }
+    }
+---
 
 apiVersion: v1
 kind: ConfigMap
