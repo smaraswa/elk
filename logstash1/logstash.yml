@@ -28,40 +28,10 @@ data:
         elasticsearch {
           hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
           #hosts => ["http://10.244.6.101:9200", "http://10.244.2.83:9200", "http://10.244.3.181:9200"]
-          index => "mule-http-logs"
       }
     }
 
 ---
-
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: logstash-pipeline
-  namespace: elk
-data:
-  pipeline.conf: |
-    input {
-      tcp {
-        port => 5044
-            codec => json
-            
-      }
-    }
-    filter {
-      date {
-        match => [ "timeMillis", "UNIX_MS" ]
-      }
-    }  
-    
-    output {
-      elasticsearch {
-        hosts => : ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
-        #hosts => ["http://10.244.6.101:9200", "http://10.244.2.83:9200", "http://10.244.3.181:9200"]
-        index => "mule-http-logs"
-
-      }
-    }
 
 apiVersion: v1
 kind: ConfigMap
@@ -88,6 +58,7 @@ data:
         hosts => : ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
         #hosts => ["http://10.244.6.101:9200", "http://10.244.2.83:9200", "http://10.244.3.181:9200"]
         index => "mule-http-logs"
+
       }
     }
 
@@ -116,20 +87,20 @@ spec:
               name: beats
             - containerPort: 9600
               name: http
-        volumeMounts:
-          - name: config
-            mountPath: /usr/share/logstash/config/logstash.yml
-            subPath: logstash.yml
-          - name: pipeline
-            mountPath: /usr/share/logstash/pipeline
-            subPath: pipeline.conf
-     volumes:
-       - name: config
-         configMap:
-           name: logstash-config
-       - name: pipeline
-         configMap:
-           name: logstash-pipeline
+        #  volumeMounts:
+        #    - name: config
+         #     mountPath: /usr/share/logstash/config/logstash.yml
+        #    subPath: logstash.yml
+        #   - name: pipeline
+        #     mountPath: /usr/share/logstash/pipeline
+        #     subPath: pipeline.conf
+     # volumes:
+     #   - name: config
+     #     configMap:
+     #      name: logstash-config
+     #   - name: pipeline
+     #    configMap:
+     #      name: logstash-pipeline
 
 ---
 
