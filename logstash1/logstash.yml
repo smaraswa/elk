@@ -96,6 +96,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: logstash
+  namespace: elk
 spec:
   selector:
     matchLabels:
@@ -128,6 +129,7 @@ spec:
         - name: pipeline
           configMap:
             name: logstash-pipeline
+
 ---
 apiVersion: v1
 kind: Service
