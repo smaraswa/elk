@@ -45,7 +45,7 @@ data:
   pipeline.conf: |
     input {
       http {
-        port => 5044
+        port => 8080
         codec => "json"
       }
     }
@@ -134,28 +134,22 @@ spec:
           ports:
             - containerPort: 5044
               name: beats
-            - containerPort: 5045
+            - containerPort: 8080
               name: http
           volumeMounts:
             - name: config
               mountPath: /usr/share/logstash/config/logstash.yml
               subPath: logstash.yml
-            - name: pipeline-beats
-              mountPath: /usr/share/logstash/pipeline/logstash-beats.conf
-              subPath: logstash.conf
-            - name: pipeline-http
-              mountPath: /usr/share/logstash/pipeline/logstash-http.conf
+            - name: pipeline
+              mountPath: /usr/share/logstash/pipeline/logstash.conf
               subPath: logstash.conf
       volumes:
         - name: config
           configMap:
             name: logstash-config
-        - name: pipeline-beats
+        - name: pipeline
           configMap:
-            name: logstash-pipeline-beats
-        - name: pipeline-http
-          configMap:
-            name: logstash-pipeline-http
+            name: logstash-pipeline
 
 ---
 
@@ -174,8 +168,8 @@ spec:
       nodePort: 31300
       
     - name: http
-      port: 5044
-      targetPort: 5044
+      port: 8080
+      targetPort: 8080
       nodePort: 31400
      
   type: NodePort
