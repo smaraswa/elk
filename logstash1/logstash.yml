@@ -131,10 +131,12 @@ spec:
             name: logstash-pipeline
 
 ---
+
 apiVersion: v1
 kind: Service
 metadata:
   name: logstash
+  namespace: elk
 spec:
   selector:
     app: logstash
@@ -142,7 +144,11 @@ spec:
     - name: beats
       port: 5044
       targetPort: 5044
+      nodePort: 31300
+      
     - name: http
       port: 9600
       targetPort: 9600
-  type: ClusterIP
+      nodePort: 31400
+     
+  type: NodePort
