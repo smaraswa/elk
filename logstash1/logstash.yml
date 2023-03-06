@@ -64,17 +64,11 @@ data:
       }
     }
     output {
-      if [type] == "tcp" {
-        elasticsearch {
-          hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
-          index => "mule-http-logs"
-        }
-      } else if [type] == "http" {
-        elasticsearch {
-          hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
-          index => "mule-http-logs"
-        }
+      elasticsearch {
+        hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
+        index => "mule-http-logs"
       }
+    }
     }
 
 ---
