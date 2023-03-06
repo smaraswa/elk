@@ -40,9 +40,7 @@ metadata:
 data:
   pipeline.conf: |
     input {
-      beats {
-        port => 5044
-      }
+      
       tcp {
         port => 5045
        
@@ -53,17 +51,8 @@ data:
     }
 
     filter {
-      if [type] == "beats" {
-        grok {
-          match => { "message" => "%{SYSLOGLINE}" }
-        }
-        date {
-          match => [ "timestamp", "MMM  d HH:mm:ss", "MMM dd HH:mm:ss" ]
-        }
-        geoip {
-          source => "clientip"
-        }
-      } else if [type] == "tcp" {
+      
+      if [type] == "tcp" {
         date {
           match => [ "timeMillis", "UNIX_MS" ]
         }
@@ -75,14 +64,10 @@ data:
           match => [ "timestamp", "dd/MMM/yyyy:HH:mm:ss Z" ]
         }
       }
-    }
+    
 
     output {
-      if [type] == "beats" {
-        elasticsearch {
-          hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
-        }
-      } else if [type] == "tcp" {
+      if [type] == "tcp" {
         elasticsearch {
           hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
           index => "mule-http-logs"
@@ -93,7 +78,7 @@ data:
           index => "mule-http-logs"
         }
       }
-    }
+    
 
 ---
 
