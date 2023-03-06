@@ -42,7 +42,7 @@ data:
     input {
       tcp {
         port => 5044
-        codec => json
+        codec => plain
       }
       http {
         port => 9600
