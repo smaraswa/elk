@@ -15,14 +15,14 @@ data:
     }
     filter {
       grok {
-          match => { "message" => "%{SYSLOGLINE}" }
+        match => { "message" => "%{SYSLOGLINE}" }
       }
       date {
         match => [ "timestamp" , "dd/MMM/yyyy:HH:mm:ss Z" ]
       }
       geoip {
-          source => "clientip"
-        }
+        source => "clientip"
+      }
     }
     output {
       elasticsearch {
@@ -43,10 +43,12 @@ data:
       tcp {
         port => 5044
         codec => json
+        type => "tcp"
       }
       http {
         port => 9600
         codec => json
+        type => "http"
       }
     }
     filter {
@@ -64,11 +66,12 @@ data:
       }
     }
     output {
-      elasticsearch {
-        hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
-        index => "mule-http-logs"
+      if [type] == "tcp" or [type] == "http" {
+        elasticsearch {
+          hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
+          index => "mule-http-logs"
+        }
       }
-    }
     }
 
 ---
@@ -127,8 +130,4 @@ spec:
       port: 5044
       targetPort: 5044
       nodePort: 31300
-    - name: http
-      port: 9600
-      targetPort: 9600
-      nodePort: 31400
-
+   
