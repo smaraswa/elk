@@ -45,7 +45,7 @@ data:
       }
       tcp {
         port => 5045
-        codec => json
+        codec => plain
       }
       http {
         port => 9600
