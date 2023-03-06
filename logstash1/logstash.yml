@@ -109,13 +109,13 @@ spec:
             - name: pipeline
               mountPath: /usr/share/logstash/pipeline
               subPath: pipeline.conf
-      volumes:
-        - name: config
-          configMap:
-            name: logstash-config
-        - name: pipeline
-          configMap:
-            name: logstash-pipeline
+     # volumes:
+      #  - name: config
+       #   configMap:
+       #     name: logstash-config
+       # - name: pipeline
+       #   configMap:
+       #     name: logstash-pipeline
 
 ---
 
