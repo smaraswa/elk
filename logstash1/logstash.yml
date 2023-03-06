@@ -15,14 +15,14 @@ data:
     }
     filter {
       grok {
-        match => { "message" => "%{SYSLOGLINE}" }
+          match => { "message" => "%{SYSLOGLINE}" }
       }
       date {
         match => [ "timestamp" , "dd/MMM/yyyy:HH:mm:ss Z" ]
       }
       geoip {
-        source => "clientip"
-      }
+          source => "clientip"
+        }
     }
     output {
       elasticsearch {
@@ -40,19 +40,30 @@ metadata:
 data:
   pipeline.conf: |
     input {
-      tcp {
+      beats {
         port => 5044
+      }
+      tcp {
+        port => 5045
         codec => json
-        type => "tcp"
       }
       http {
         port => 9600
-        codec => json
-        type => "http"
       }
     }
+
     filter {
-      if [type] == "tcp" {
+      if [type] == "beats" {
+        grok {
+          match => { "message" => "%{SYSLOGLINE}" }
+        }
+        date {
+          match => [ "timestamp", "MMM  d HH:mm:ss", "MMM dd HH:mm:ss" ]
+        }
+        geoip {
+          source => "clientip"
+        }
+      } else if [type] == "tcp" {
         date {
           match => [ "timeMillis", "UNIX_MS" ]
         }
@@ -65,8 +76,18 @@ data:
         }
       }
     }
+
     output {
-      if [type] == "tcp" or [type] == "http" {
+      if [type] == "beats" {
+        elasticsearch {
+          hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
+        }
+      } else if [type] == "tcp" {
+        elasticsearch {
+          hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
+          index => "mule-http-logs"
+        }
+      } else if [type] == "http" {
         elasticsearch {
           hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
           index => "mule-http-logs"
@@ -130,4 +151,8 @@ spec:
       port: 5044
       targetPort: 5044
       nodePort: 31300
-   
+    - name: http
+      port: 9600
+      targetPort: 9600
+      nodePort: 31400
+
