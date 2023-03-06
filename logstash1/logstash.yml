@@ -102,13 +102,13 @@ spec:
               name: beats
             - containerPort: 9600
               name: http
-          volumeMounts:
-            - name: config
-              mountPath: /usr/share/logstash/config/logstash.yml
-              subPath: logstash.yml
-            - name: pipeline
-              mountPath: /usr/share/logstash/pipeline
-              subPath: pipeline.conf
+    #      volumeMounts:
+    #        - name: config
+    #          mountPath: /usr/share/logstash/config/logstash.yml
+    #          subPath: logstash.yml
+    #        - name: pipeline
+    #          mountPath: /usr/share/logstash/pipeline
+    #          subPath: pipeline.conf
      # volumes:
       #  - name: config
        #   configMap:
