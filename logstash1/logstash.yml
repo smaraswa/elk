@@ -2,88 +2,49 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: logstash-config
-  namespace: elk
 data:
-  logstash.yml: |
-    http.host: "0.0.0.0"
-    path.config: /usr/share/logstash/pipeline
-  logstash.conf: |
-    input {
-      beats {
-        port => 5044
-      }
-    }
-    filter {
-      grok {
-          match => { "message" => "%{SYSLOGLINE}" }
-      }
-      date {
-        match => [ "timestamp" , "dd/MMM/yyyy:HH:mm:ss Z" ]
-      }
-      geoip {
-          source => "clientip"
-        }
-    }
-    output {
-      elasticsearch {
-        hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
-      }
-    }
-
----
-
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: logstash-pipeline
-  namespace: elk
-data:
-  pipeline.conf: |
+  logstash.conf: |-
     input {
       tcp {
-        port => 5044
-        codec => json
+        port => 5000
       }
       http {
-        port => 9600
-        codec => json
+        port => 8080
       }
     }
+
     filter {
-      if [type] == "tcp" {
-        date {
-          match => [ "timeMillis", "UNIX_MS" ]
-        }
-      } else if [type] == "http" {
-        grok {
-          match => [ "message", "%{COMBINEDAPACHELOG}" ]
-        }
-        date {
-          match => [ "timestamp", "dd/MMM/yyyy:HH:mm:ss Z" ]
-        }
-      }
+      # Add filters here
     }
+
     output {
       if [type] == "tcp" {
-        elasticsearch {
-          hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
-          index => "mule-logs"
-        }
-      } else if [type] == "http" {
         elasticsearch {
           hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
           index => "mule-http-logs"
         }
       }
-    }
 
 ---
-
+apiVersion: v1
+kind: Service
+metadata:
+  name: logstash
+spec:
+  selector:
+    app: logstash
+  ports:
+    - name: tcp
+      port: 5000
+      protocol: TCP
+    - name: http
+      port: 8080
+      protocol: TCP
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: logstash
-  namespace: elk
 spec:
   selector:
     matchLabels:
@@ -96,27 +57,22 @@ spec:
     spec:
       containers:
         - name: logstash
-          image: docker.elastic.co/logstash/logstash:7.9.0
+          image: docker.elastic.co/logstash/logstash:7.13.4
           ports:
-            - containerPort: 5044
-              name: beats
-            - containerPort: 9600
+            - containerPort: 5000
+              name: tcp
+            - containerPort: 8080
               name: http
-    #      volumeMounts:
-    #        - name: config
-    #          mountPath: /usr/share/logstash/config/logstash.yml
-    #          subPath: logstash.yml
-    #        - name: pipeline
-    #          mountPath: /usr/share/logstash/pipeline
-    #          subPath: pipeline.conf
-     # volumes:
-      #  - name: config
-       #   configMap:
-       #     name: logstash-config
-       # - name: pipeline
-       #   configMap:
-       #     name: logstash-pipeline
-
+          volumeMounts:
+            - name: pipeline
+              mountPath: /usr/share/logstash/pipeline
+      volumes:
+        - name: pipeline
+          configMap:
+            name: logstash-config
+            items:
+              - key: logstash.conf
+                path: logstash.conf
 ---
 
 apiVersion: v1
@@ -128,12 +84,12 @@ spec:
   selector:
     app: logstash
   ports:
-    - name: beats
-      port: 5044
-      targetPort: 5044
+    - name: tcp
+      port: 5000
+      targetPort: 5000
       nodePort: 31300
     - name: http
-      port: 9600
-      targetPort: 9600
+      port: 8080
+      targetPort: 8080
       nodePort: 31400
   type: NodePort
