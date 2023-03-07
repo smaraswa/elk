@@ -6,8 +6,7 @@ metadata:
 data:
   logstash.yml: |
     http.host: "0.0.0.0"
-    path.config: /usr/share/logstash/pipeline/logstash.conf
-    
+    path.config: /usr/share/logstash/pipeline
   logstash.conf: |
     input {
       beats {
@@ -42,7 +41,7 @@ data:
   pipeline.conf: |
     input {
       tcp {
-        port => 5045
+        port => 5044
         codec => json
       }
       http {
@@ -52,9 +51,6 @@ data:
     }
     filter {
       if [type] == "tcp" {
-        json {
-          source => "message"
-        }
         date {
           match => [ "timeMillis", "UNIX_MS" ]
         }
@@ -104,8 +100,6 @@ spec:
           ports:
             - containerPort: 5044
               name: beats
-            - containerPort: 5045
-              name: tcp
             - containerPort: 9600
               name: http
           volumeMounts:
@@ -139,11 +133,8 @@ spec:
       port: 5044
       targetPort: 5044
       nodePort: 31300
-    - name: tcp
-      port: 5045
-      targetPort: 5045
-      nodePort: 31200
     - name: http
       port: 9600
       targetPort: 9600
       nodePort: 31400
+
