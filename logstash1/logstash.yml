@@ -40,18 +40,16 @@ metadata:
 data:
   pipeline.conf: |
     input {
-      
       tcp {
-        port => 5045
-       
+        port => 5044
+        codec => json
       }
       http {
         port => 9600
+        codec => json
       }
     }
-
     filter {
-      
       if [type] == "tcp" {
         date {
           match => [ "timeMillis", "UNIX_MS" ]
@@ -64,8 +62,7 @@ data:
           match => [ "timestamp", "dd/MMM/yyyy:HH:mm:ss Z" ]
         }
       }
-    
-
+    }
     output {
       if [type] == "tcp" {
         elasticsearch {
@@ -78,7 +75,7 @@ data:
           index => "mule-http-logs"
         }
       }
-    
+    }
 
 ---
 
@@ -103,8 +100,6 @@ spec:
           ports:
             - containerPort: 5044
               name: beats
-            - containerPort: 5045
-              name: tcp
             - containerPort: 9600
               name: http
           volumeMounts:
@@ -138,10 +133,6 @@ spec:
       port: 5044
       targetPort: 5044
       nodePort: 31300
-    - name: tcp
-      port: 5045
-      targetPort: 5045
-      nodePort: 31200
     - name: http
       port: 9600
       targetPort: 9600
