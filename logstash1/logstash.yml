@@ -57,10 +57,10 @@ data:
         }
       } else if [type] == "http" {
         grok {
-          match => [ "message", "%{COMBINEDAPACHELOG}" ]
+          match => { "message", "%{COMBINEDAPACHELOG}" }
         }
         date {
-          match => [ "timestamp", "dd/MMM/yyyy:HH:mm:ss Z" ]
+          match => { "timestamp", "dd/MMM/yyyy:HH:mm:ss Z" }
         }
       }
     }
