@@ -57,24 +57,17 @@ data:
         }
       } else if [type] == "http" {
         grok {
-          match => { "message", "%{COMBINEDAPACHELOG}" }
+          match => [ "message", "%{COMBINEDAPACHELOG}" ]
         }
         date {
-          match => { "timestamp", "dd/MMM/yyyy:HH:mm:ss Z" }
+          match => [ "timestamp", "dd/MMM/yyyy:HH:mm:ss Z" ]
         }
       }
     }
     output {
-      if [type] == "tcp" {
-        elasticsearch {
-          hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
-          index => "mule-http-logs"
-        }
-      } else if [type] == "http" {
-        elasticsearch {
-          hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
-          index => "mule-http-logs"
-        }
+      elasticsearch {
+        hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
+        index => "mule-http-logs"
       }
     }
 
