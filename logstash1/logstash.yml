@@ -6,7 +6,8 @@ metadata:
 data:
   logstash.yml: |
     http.host: "0.0.0.0"
-    path.config: /usr/share/logstash/pipeline
+    path.config: /usr/share/logstash/pipeline/logstash.conf
+    
   logstash.conf: |
     input {
       beats {
@@ -41,42 +42,44 @@ data:
   pipeline.conf: |
     input {
       tcp {
-       port => 5045
-         codec => json_lines
+        port => 5045
+        codec => json
       }
       http {
         port => 9600
+        codec => json
       }
     }
-
     filter {
       if [type] == "tcp" {
+        json {
+          source => "message"
+        }
         date {
           match => [ "timeMillis", "UNIX_MS" ]
         }
       } else if [type] == "http" {
         grok {
-          match => { "message" => "%{COMBINEDAPACHELOG}" }
+          match => [ "message", "%{COMBINEDAPACHELOG}" ]
         }
         date {
           match => [ "timestamp", "dd/MMM/yyyy:HH:mm:ss Z" ]
         }
       }
     }
-
-output {
-  if [type] == "tcp" {
-    elasticsearch {
-      hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
-      index => "mule-http-logs"
+    output {
+      if [type] == "tcp" {
+        elasticsearch {
+          hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
+          index => "mule-http-logs"
+        }
+      } else if [type] == "http" {
+        elasticsearch {
+          hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
+          index => "mule-http-logs"
+        }
+      }
     }
-  } else if [type] == "http" {
-    elasticsearch {
-      hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
-      index => "mule-http-logs"
-    }
-  }
-}
 
 ---
 
