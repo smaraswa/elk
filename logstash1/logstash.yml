@@ -42,12 +42,12 @@ data:
     input {
       tcp {
         port => 5045
-        codec => json
+        
         
       }
       http {
         port => 9600
-        codec => json
+        
       }
     }
     filter {
