@@ -103,11 +103,11 @@ spec:
               mountPath: /usr/share/elasticsearch/data
           resources:
             requests:
-              cpu: 500m
-              memory: 1Gi
-            limits:
               cpu: 1000m
               memory: 2Gi
+            limits:
+              cpu: 2000m
+              memory: 3Gi
       volumes:
         - name: config
           configMap:
