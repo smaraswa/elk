@@ -71,7 +71,7 @@ spec:
       labels:
         app: elasticsearch
     spec:
-      nodeselector:
+      nodeSelector:
         kubernetes.io/hostname: uspgh-neks-d1,uspgh-neks-d2,uspgh-neks-d3
       containers:
         - name: elasticsearch
