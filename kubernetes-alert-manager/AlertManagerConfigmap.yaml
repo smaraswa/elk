@@ -2,7 +2,7 @@ kind: ConfigMap
 apiVersion: v1
 metadata:
   name: alertmanager-config
-  namespace: monitoring
+  namespace: elk
 data:
   config.yml: |-
     global:
@@ -24,10 +24,10 @@ data:
     receivers:
     - name: alert-emailer
       email_configs:
-      - to: demo@devopscube.com
+      - to: santhosh.kumar@thermofisher.com
         send_resolved: false
-        from: from-email@email.com
-        smarthost: smtp.eample.com:25
+        from: smaraswa@gmail.com
+        smarthost: smtp.gmail.com:25
         require_tls: false
     - name: slack_demo
       slack_configs:
