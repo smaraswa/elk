@@ -100,7 +100,7 @@ spec:
               mountPath: /usr/share/elasticsearch/config/elasticsearch.yml
               subPath: elasticsearch.yml
             - name: data
-              mountPath: /esdata/data/elasticsearch
+              mountPath: /usr/share/elasticsearch/data/
           resources:
             requests:
               cpu: 1000m
