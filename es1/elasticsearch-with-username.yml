@@ -23,12 +23,12 @@ metadata:
   name: elasticsearch-pv
 spec:
   capacity:
-    storage: 5Gi
+    storage: 200Gi
   accessModes:
     - ReadWriteOnce
   storageClassName: standard
   hostPath:
-    path: /mnt/data/elasticsearch
+    path: /esdata
 
 ---
 
@@ -43,7 +43,7 @@ spec:
   storageClassName: standard
   resources:
     requests:
-      storage: 5Gi
+      storage: 200Gi
 
 ---
 
@@ -78,7 +78,7 @@ spec:
     spec:
       containers:
         - name: elasticsearch
-          image: docker.elastic.co/elasticsearch/elasticsearch:7.9.0
+          image: docker.elastic.co/elasticsearch/elasticsearch:8.6.0
           
           env:
             - name: NAMESPACE
