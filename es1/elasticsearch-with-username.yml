@@ -28,7 +28,7 @@ spec:
     - ReadWriteOnce
   storageClassName: standard
   hostPath:
-    path: /esdata
+    path: /esdata/data/elasticsearch
 
 ---
 
@@ -100,7 +100,7 @@ spec:
               mountPath: /usr/share/elasticsearch/config/elasticsearch.yml
               subPath: elasticsearch.yml
             - name: data
-              mountPath: /esdata/elasticsearch/data
+              mountPath: /esdata/data/elasticsearch
           resources:
             requests:
               cpu: 1000m
