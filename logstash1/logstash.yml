@@ -27,7 +27,7 @@ data:
     output {
       elasticsearch {
         hosts => ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
-       
+        
         
       }
     }
@@ -84,7 +84,7 @@ spec:
   selector:
     matchLabels:
       app: logstash
-  replicas: 2
+  replicas: 1
   template:
     metadata:
       labels:
