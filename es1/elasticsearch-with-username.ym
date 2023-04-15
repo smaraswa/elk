@@ -80,17 +80,18 @@ spec:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
-              - matchExpressions:
-                - key: kubernetes.io/hostname
-                  operator: In
-                  values:
-                    - uspgh-neks-d3
-                    - uspgh-neks-d4
-                    - uspgh-neks-d5
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - uspgh-neks-d3
+                - uspgh-neks-d4
+                - uspgh-neks-d5
       containers:
         - name: elasticsearch
           image: docker.elastic.co/elasticsearch/elasticsearch:8.6.0
-          # Rest of your container configuration
+          # rest of the configuration
+
 
           
           env:
