@@ -66,8 +66,11 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: kibana
+  maxReplicas: 5
   metrics:
     - type: Resource
       resource:
         name: cpu
-        targetAverageUtilization: 50
+        target:
+          type: Utilization
+          averageUtilization: 50
