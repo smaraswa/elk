@@ -10,13 +10,12 @@ data:
     network.host: 0.0.0.0
     discovery.seed_hosts: ["elasticsearch-0.elasticsearch", "elasticsearch-1.elasticsearch", "elasticsearch-2.elasticsearch"]
     cluster.initial_master_nodes: ["elasticsearch-0", "elasticsearch-1", "elasticsearch-2"]
-  elasticsearch.yml: |
     xpack.security.authc.realms.native.type: native
     xpack.security.authc.realms.native.order: 0
-  elasticsearch.yml: |
     xpack.security.authz.roles.role_name.cluster: [ "all" ]
     xpack.security.authz.roles.role_name.indices.names: [ "*" ]
     xpack.security.authz.roles.role_name.indices.privileges: [ "all" ]
+
 
 
 
