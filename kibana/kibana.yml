@@ -10,11 +10,6 @@ data:
     elasticsearch.hosts: ["http://elasticsearch-0.elasticsearch:9200", "http://elasticsearch-1.elasticsearch:9200", "http://elasticsearch-2.elasticsearch:9200"]
     #elasticsearch.hosts: ["http://10.244.3.222:9200", "http://10.244.6.144:9200", "http://10.244.2.117:9200"]
 
-   
-
-    
-   
-
 ---
 
 apiVersion: apps/v1
@@ -35,8 +30,6 @@ spec:
       containers:
         - name: kibana
           image: docker.elastic.co/kibana/kibana:8.6.0
-            
-                
           ports:
             - containerPort: 5601
               name: http
@@ -50,12 +43,12 @@ spec:
           configMap:
             name: kibana-config
       resources:
-            requests:
-              cpu: 1000m
-              memory: 3Gi
-            limits:
-              cpu: 1000m
-              memory: 3Gi
+        requests:
+          cpu: 1000m
+          memory: 3Gi
+        limits:
+          cpu: 1000m
+          memory: 3Gi
 
 ---
 
@@ -74,4 +67,3 @@ spec:
       targetPort: 5601
       nodePort: 30360
   type: NodePort
-
