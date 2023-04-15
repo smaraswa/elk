@@ -37,18 +37,18 @@ spec:
             - name: config
               mountPath: /usr/share/kibana/config/kibana.yml
               subPath: kibana.yml
+          resources:
+            requests:
+              cpu: 1000m
+              memory: 3Gi
+            limits:
+              cpu: 1000m
+              memory: 3Gi
         
       volumes:
         - name: config
           configMap:
             name: kibana-config
-      resources:
-        requests:
-          cpu: 1000m
-          memory: 3Gi
-        limits:
-          cpu: 1000m
-          memory: 3Gi
 
 ---
 
