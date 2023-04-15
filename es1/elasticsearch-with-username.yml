@@ -12,6 +12,9 @@ data:
     cluster.initial_master_nodes: ["elasticsearch-0", "elasticsearch-1", "elasticsearch-2"]
     xpack.security.enabled: true
     xpack.security.authc.api_key.enabled: true
+    xpack.security.transport.ssl.enabled: true
+
+
 
     
 
