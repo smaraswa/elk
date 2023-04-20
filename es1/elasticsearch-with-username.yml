@@ -31,7 +31,7 @@ metadata:
   name: elasticsearch-pv
 spec:
   capacity:
-    storage: 500Gi
+    storage: 200Gi
   accessModes:
     - ReadWriteOnce
   storageClassName: standard
@@ -51,7 +51,7 @@ spec:
   storageClassName: standard
   resources:
     requests:
-      storage: 500Gi
+      storage: 200Gi
 
 ---
 
