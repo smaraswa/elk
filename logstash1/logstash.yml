@@ -104,7 +104,7 @@ spec:
           image: docker.elastic.co/logstash/logstash:8.6.0
           env:
             - name: LS_JAVA_OPTS
-              value: "-Xmx2g -Xms2g"
+              value: "-Xmx8g -Xms8g"
           resources:
             requests:
               cpu: 2000m
