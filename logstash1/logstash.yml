@@ -54,7 +54,7 @@ data:
         
       }
       http {
-        port => 9600
+        port => 9700
         codec => json
         threads => 32
         
@@ -155,6 +155,6 @@ spec:
       targetPort: 5045
       nodePort: 31200
     - name: http
-      port: 9600
-      targetPort: 9600
+      port: 9700
+      targetPort: 9700
       nodePort: 31400
