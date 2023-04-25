@@ -55,6 +55,7 @@ data:
       http {
         port => 9600
         codec => json
+        threads => 8
       }
     }
     filter {
