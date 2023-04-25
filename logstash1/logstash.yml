@@ -50,7 +50,7 @@ data:
       tcp {
         port => 5045
         codec => json
-        threads => 8
+       
         
       }
       http {
