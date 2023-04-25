@@ -56,7 +56,7 @@ data:
         port => 9600
         codec => json
         threads => 8
-        event_loop_threads => 4
+        
 
       }
     }
