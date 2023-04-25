@@ -117,7 +117,7 @@ spec:
               name: beats
             - containerPort: 5045
               name: tcp
-            - containerPort: 9600
+            - containerPort: 9700
               name: http
           volumeMounts:
             - name: config
