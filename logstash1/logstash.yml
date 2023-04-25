@@ -98,6 +98,13 @@ spec:
       containers:
         - name: logstash
           image: docker.elastic.co/logstash/logstash:8.6.0
+          resources:
+            requests:
+              cpu: 2000m
+              memory: 4Gi
+            limits:
+              cpu: 2000m
+              memory: 4Gi
           ports:
             - containerPort: 5044
               name: beats
