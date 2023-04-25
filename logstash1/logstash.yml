@@ -7,6 +7,11 @@ data:
   logstash.yml: |
     http.host: "0.0.0.0"
     path.config: /usr/share/logstash/pipeline
+    pipeline.workers: 4
+    pipeline.batch.size: 125
+    queue.type: persisted
+    queue.page_capacity: 64mb
+    queue.max_bytes: 512mb
   logstash.conf: |
     input {
       beats {
