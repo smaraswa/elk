@@ -96,6 +96,10 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+      
+            - name: ES_JAVA_OPTS
+              value: "-Xms3g -Xmx3g"
+
           ports:
             - containerPort: 9200
               name: http
@@ -109,11 +113,11 @@ spec:
               mountPath: /usr/share/elasticsearch/data
           resources:
             requests:
-              cpu: 2000m
-              memory: 4Gi
+              cpu: 1500m
+              memory: 6Gi
             limits:
-              cpu: 2000m
-              memory: 4Gi
+              cpu: 1500m
+              memory: 6Gi
       volumes:
         - name: config
           configMap:
