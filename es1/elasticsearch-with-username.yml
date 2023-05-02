@@ -112,11 +112,11 @@ spec:
               mountPath: /usr/share/elasticsearch/data
           resources:
             requests:
-              cpu: 1500m
-              memory: 5Gi
+              cpu: 1000m
+              memory: 2Gi
             limits:
-              cpu: 1500m
-              memory: 5Gi
+              cpu: 1000m
+              memory: 2Gi
       volumes:
         - name: config
           configMap:
@@ -124,6 +124,23 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: elasticsearch-pvc
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: elasticsearch-autoscaler
+  namespace: elk
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: StatefulSet
+    name: elasticsearch
+  minReplicas: 3
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageUtilization: 50
 
 ---
 
@@ -158,3 +175,4 @@ spec:
       port: 9200
       nodePort: 31500
   type: NodePort
+  
