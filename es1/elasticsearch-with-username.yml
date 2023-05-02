@@ -87,8 +87,6 @@ spec:
         - name: elasticsearch
           image: docker.elastic.co/elasticsearch/elasticsearch:8.6.0
           # rest of the configuration
-
-          
           env:
             - name: NAMESPACE
               valueFrom:
@@ -98,7 +96,6 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
-             
           ports:
             - containerPort: 9200
               name: http
@@ -124,6 +121,9 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: elasticsearch-pvc
+
+---
+
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -141,6 +141,7 @@ spec:
       resource:
         name: cpu
         targetAverageUtilization: 50
+
 
 ---
 
