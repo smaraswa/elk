@@ -114,10 +114,10 @@ spec:
           resources:
             requests:
               cpu: 1500m
-              memory: 4Gi
+              memory: 10Gi
             limits:
               cpu: 4000m
-              memory: 7Gi
+              memory: 10Gi
       volumes:
         - name: config
           configMap:
