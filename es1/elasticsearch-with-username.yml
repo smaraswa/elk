@@ -113,7 +113,7 @@ spec:
               mountPath: /usr/share/elasticsearch/data
           resources:
             requests:
-              cpu: 1500m
+              cpu: 2000m
               memory: 20Gi
             limits:
               cpu: 4000m
