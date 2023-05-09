@@ -98,7 +98,7 @@ spec:
                   fieldPath: metadata.name
       
             - name: ES_JAVA_OPTS
-              value: "-Xms8g -Xmx8g"
+              value: "-Xms4g -Xmx4g"
 
           ports:
             - containerPort: 9200
@@ -113,7 +113,7 @@ spec:
               mountPath: /usr/share/elasticsearch/data
           resources:
             requests:
-              cpu: 2000m
+              cpu: 1500m
               memory: 10Gi
             limits:
               cpu: 2000m
