@@ -12,7 +12,8 @@ on:
 name: Main Workflow
 jobs:
   sonarqube:
-    runs-on: ubuntu-latest
+    # Specify the label or tag of your self-hosted runner
+    runs-on: [self-hosted, kubernetes-runner]
     steps:
     - uses: actions/checkout@v3
       with:
