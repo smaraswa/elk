@@ -1,36 +1,29 @@
-# This is a basic workflow to help you get started with Actions
+name: sonar
 
-name: CI
-
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
-  push:
-    branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
+  common:
+    runs-on: ubuntu-latest
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+
       - uses: actions/checkout@v3
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - name: sonar
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+
+          wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856.zip -O /tmp/sonar-scanner.zip
+          unzip /tmp/sonar-scanner.zip -d /tmp
+          mv /tmp/sonar-scanner-* /tmp/sonar-scanner
+          rm /tmp/sonar-scanner.zip
+          export PATH="$PATH:/tmp/sonar-scanner/bin"
+
+          sonar-scanner -X \
+            -Dsonar.projectKey=santhosh \
+            -Dsonar.sources=. \
+            -Dsonar.host.url=http://uspgh-neks-t4.amer.thermo.com:30653/ \
+            -Dsonar.token=squ_d5b4c1c71b3e6c57c9dc4ad32e80205bef8f6332
